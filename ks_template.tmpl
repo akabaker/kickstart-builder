@@ -1,0 +1,90 @@
+#platform=x86, AMD64, or Intel EM64T
+# System authorization information
+auth  --useshadow  --enablemd5
+
+#skip installation key prompt
+key --skip
+
+# System bootloader configuration
+bootloader --location=mbr
+
+# Clear the Master Boot Record
+zerombr
+
+# Partition clearing information
+clearpart --all --drives=sda
+
+# Use text mode install
+text
+
+# Firewall configuration
+firewall --disabled
+
+# Run the Setup Agent on first boot
+firstboot --disable
+
+# System keyboard
+keyboard us
+
+# System language
+lang en_US
+
+# Installation logging level
+logging --level=info
+
+# Use network installation
+url --url=${install_url}
+
+# Network information
+network --bootproto=static --device=eth0 --onboot=on --ip=${ip} --netmask=${netmask} --gateway=${gateway} --nameserver=${dns} --hostname=${hostname} --noipv6
+
+# csg repo
+repo --name=csgrepo --baseurl=${repo_url}
+
+#Root password
+rootpw --iscrypted $1$8.9EYbbz$QWnYIUEBDPuCynNbkGten.
+
+# SELinux configuration
+selinux --disabled
+
+# Do not configure the X Window System
+skipx
+
+# System timezone
+timezone  America/Chicago
+
+# Install OS instead of upgrade
+install
+
+# Disk partitioning information
+part /boot --asprimary --bytes-per-inode=4096 --fstype="ext3" --size=100
+part swap --asprimary --bytes-per-inode=4096 --fstype="swap" --size=2048
+part /tmp --asprimary --bytes-per-inode=4096 --fstype="ext3" --size=1024
+part / --asprimary --bytes-per-inode=4096 --fstype="ext3" --grow --size=1
+
+%packages
+@base
+ruby
+ruby-libs
+puppet
+facter
+
+%post
+/sbin/chkconfig puppet on
+#set nameserver
+/bin/echo -e "search missouri.edu\nnameserver 128.206.10.2\nnameserver 128.206.10.3" > /etc/resolv.conf
+#rhn registration, box is put into admin's system group on rhn
+/usr/bin/wget -qO - http://rhn.missouri.edu/pub/bootstrap/${bootstrap} | /bin/bash
+#make initial puppet request, check for cert signature every 60 sec
+/bin/echo "Starting puppet run"
+/usr/sbin/puppetd -t --fqdn=bootstrap.missouri.edu --waitforcert=10 --server puppet-vm1.missouri.edu
+#sleep
+/bin/sleep 5
+#another puppet run, for good measure
+/usr/sbin/puppetd -t --fqdn=bootstrap.missouri.edu --server puppet-vm1.missouri.edu
+#updates
+/usr/bin/yum -y update
+#remove the old cert 
+/bin/rm -rf /var/lib/puppet
+/bin/rpm -e puppet
+/usr/bin/yum -y install puppet
