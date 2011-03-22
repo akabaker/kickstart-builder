@@ -1,1 +1,6 @@
 Builds kickstart files using ks_template.tmpl as a template
+
+Usage:
+	buildks.py [options] <hostname> <ipaddress> <netmask> <nameserver> <gateway>
+
+	You must specify each of the arguments. 
