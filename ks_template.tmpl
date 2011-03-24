@@ -72,7 +72,7 @@ facter
 %post
 /sbin/chkconfig puppet on
 #set nameserver
-/bin/echo -e "search missouri.edu\nnameserver 128.206.10.2\nnameserver 128.206.10.3" > /etc/resolv.conf
+/bin/echo -e "search missouri.edu\nnameserver ${dns}" > /etc/resolv.conf
 #rhn registration, box is put into admin's system group on rhn
 /usr/bin/wget -qO - http://rhn.missouri.edu/pub/bootstrap/${bootstrap} | /bin/bash
 #make initial puppet request, check for cert signature every 60 sec

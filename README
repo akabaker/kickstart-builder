@@ -1,6 +1,13 @@
 Builds kickstart files using ks_template.tmpl as a template
 
 Usage:
-	buildks.py [options] <hostname> <ipaddress> <netmask> <nameserver> <gateway>
+	buildks.py [options] <fqdn> <ipaddress> <netmask> <gateway> <nameserver> 
 
 	You must specify each of the arguments. 
+
+Example:
+	(Note: buildks is in root's path on rhn)
+
+	buildks -b bakerlu_bootstrap.sh bakerlu-sb.missouri.edu 128.206.0.157 255.255.255.192 128.206.0.190 128.206.10.2
+
+	The kickstart file will be named <fqdn>.ks; it is written to /var/www/html/pub/ks/

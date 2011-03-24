@@ -75,7 +75,7 @@ class BuildKs(object):
 		bootstrap = os.path.join(self.bootstrap_path, self.options.bootstrap)
 
 		if os.path.exists(bootstrap) is not True:
-			raise OptionValueError('Bootstrap script does not exist')
+			raise OptionValueError('The specified bootstrap script does not exist')
 
 	def build_url_segments(self):
 		"""
