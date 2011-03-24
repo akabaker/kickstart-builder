@@ -11,14 +11,14 @@ class KickstartBuild(object):
 
 	"""
 	
-	def __init__(self):
+	def __init__(self, template_file):
 		"""
 		Builds the parser menu, sets attibutes
 
 		"""
 
 		# Attributes
-		self.template_file = 'ks_template.tmpl'	
+		self.template_file = template_file	
 		self.base_url = 'http://rhn.missouri.edu/pub'
 		self.repo_name = 'csgrepo'
 		self.repo_url = '/'.join([self.base_url,self.repo_name])

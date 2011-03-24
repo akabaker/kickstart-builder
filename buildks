@@ -3,9 +3,9 @@
 from kickstartbuild import KickstartBuild
 
 def main():
-	#output_dir = '/var/www/html/pub/ks/'
-	output_dir = '/home/ljb6tw/'
-	ks = KickstartBuild()
+	output_dir = '/var/www/html/pub/ks/'
+	template_file = '/usr/local/sbin/kickstart-builder/ks_template.tmpl'
+	ks = KickstartBuild(template_file)
 	ks.check_args()
 	ks.validate()
 	ks.build(output_dir)
