@@ -162,7 +162,8 @@ class BuildKs(object):
 			raise DirectoryError('Directory does not exist')
 
 def main():
-	output_dir = '/var/www/html/pub/ks/'
+	#output_dir = '/var/www/html/pub/ks/'
+	output_dir = '/home/ljb6tw/'
 	ks = BuildKs()
 	ks.check_args()
 	ks.validate()

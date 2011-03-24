@@ -36,7 +36,7 @@ logging --level=info
 url --url=${install_url}
 
 # Network information
-network --bootproto=static --device=eth0 --onboot=on --ip=${ip} --netmask=${netmask} --gateway=${gateway} --nameserver=${dns} --hostname=${hostname} --noipv6
+network --bootproto=static --device=eth0 --onboot=on --hostname=${hostname} --ip=${ip} --netmask=${netmask} --gateway=${gateway} --nameserver=${dns} --noipv6
 
 # csg repo
 repo --name=csgrepo --baseurl=${repo_url}
