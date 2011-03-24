@@ -55,6 +55,14 @@ class BuildKs(object):
 		(self.options, self.args) = self.parser.parse_args()
 	
 	def check_args(self):
+		"""
+		Validate argument length, arch and release options.
+		Length validation compares number of args vs self.args_required (set in constructor)
+		Arch validation compares the arch option vs self.valid_archs (list, set in constructor)
+		Release validation compares release option vs self.valid_releases (list, set in constructor)
+
+		"""
+
 		if len(self.args) < self.args_required:
 			self.parser.error('Incorrect number of arguments')
 
@@ -65,6 +73,12 @@ class BuildKs(object):
 			raise OptionValueError('Not a valid release')
 
 	def validate(self):
+		"""
+		Validate digs the fqdn and IP address. If either of these do not resolve properly, raise an error
+		If the bootstrap option is specified, validate checks to make sure that the script exists
+
+		"""
+
 		# Slice off the last character from the result [:-2]
 		checked_hostname = Popen("dig +short -x %s" % self.args[1], stdout=PIPE, shell=True).communicate()[0][:-2]
 		checked_ip = Popen("dig +short %s" % self.args[0], stdout=PIPE, shell=True).communicate()[0].strip()	
