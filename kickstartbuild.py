@@ -22,17 +22,19 @@ class KickstartBuild(object):
 		self.base_url = 'http://rhn.missouri.edu/pub'
 		self.repo_name = 'csgrepo'
 		self.repo_url = '/'.join([self.base_url,self.repo_name])
+
 		# Array of strings because we have to join these later (I'm lazy)
 		self.valid_releases = ['4', '5', '6']
 		self.valid_archs = ['x86_64', 'i386']
 		self.bootstrap_path = os.path.dirname('/var/www/html/pub/bootstrap/')
+
 		# args_required should be set to minimum required arguments
-		self.args_required = 5
+		self.args_required = 4
 
 		# Parser options
 		self.parser = OptionParser(
 			add_help_option=True,
-			usage = "%prog [options] <fqdn> <ipaddress> <netmask> <gateway> <nameserver>",
+			usage = "%prog [options] <fqdn> <ipaddress> <netmask> <gateway>",
 			version = "%prog 1.0",
 		)
 
@@ -40,15 +42,21 @@ class KickstartBuild(object):
 			arch = 'x86_64',
 			release = '5',
 			bootstrap = 'bootstrap.sh',
+			dns = '128.206.10.2',
 		)
 
 		self.parser.add_option('-a', '--arch', action='store', type='string',
 						 help='x86_64 or i386', dest='arch')
-		self.parser.add_option('-r', '--release', action='store',type='string', dest='release',
-						 help='Distribution Release, (i.e., 5 or 6)')
+
 		self.parser.add_option('-b', '--bootstrap', action='store', type='string', dest='bootstrap',
 						 help='Your bootstrap script (i.e., bakerlu_bootstrap.sh)')
-	
+
+		self.parser.add_option('-d', '--dns', action='store', type='string', dest='dns',
+						 help='DNS server')
+
+		self.parser.add_option('-r', '--release', action='store',type='string', dest='release',
+						 help='Distribution Release, (i.e., 5 or 6)')
+
 		# Set options and args
 		(self.options, self.args) = self.parser.parse_args()
 	
@@ -150,13 +158,14 @@ class KickstartBuild(object):
 			ip = self.args[1],
 			netmask = self.args[2],
 			gateway = self.args[3],
-			dns = self.args[4],
+			dns = self.options.dns,
 			bootstrap = self.options.bootstrap,
 			# i.e., rhn.missouri.edu/pub/csgrepo/5Server/x86_64
 			repo_url = '/'.join([self.repo_url, url_segments.get('repo_segment')]),	
 		)
 
 		dir = os.path.dirname(output_dir)
+
 		# The kickstart filename is <hostname>.ks
 		filename = '.'.join([self.args[0], 'ks'])
 		file = os.path.join(dir, filename)

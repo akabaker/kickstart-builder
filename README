@@ -2,7 +2,7 @@ Builds kickstart files using ks_template.tmpl as a template
 
 Usage:
 
-	buildks [options] <fqdn> <ipaddress> <netmask> <gateway> <nameserver> 
+	buildks [options] <fqdn> <ipaddress> <netmask> <gateway>
 
 	You must specify each of these arguments. 
 
@@ -14,8 +14,15 @@ Example:
 
 	buildks -b bakerlu_bootstrap.sh bakerlu-sb.missouri.edu 128.206.0.157 255.255.255.192 128.206.0.190 128.206.10.2
 
-	The kickstart file will be named <fqdn>.ks; it is written to /var/www/html/pub/ks/. By default, it will select
-	'x86_64' as the arch and RHEL 5 as the release. You can specify different values. The example below defines
-	RHEL6 release and i386 architecture.
+	The kickstart file will be named <fqdn>.ks; it is written to /var/www/html/pub/ks/.
+	
+	The following options are set by default:
+		-Arch=x86_64
+		-Release=5
+		-Bootstrap=bootstrap.sh (default DoIT group on RHN)
+		-Dns=128.206.10.2
+
+	These defaults can be overriden by supplying the approprate options. The example below defines
+	RHEL6 release, i386 architecture, and 'bakerlu_bootstrap.sh' as the bootstrap script.
 
 	buildks -a 6 -r i386 -b bakerlu_bootstrap.sh bakerlu-sb.missouri.edu 128.206.0.157 255.255.255.192 128.206.0.190 128.206.10.2
