@@ -1,13 +1,21 @@
 Builds kickstart files using ks_template.tmpl as a template
 
 Usage:
-	buildks.py [options] <fqdn> <ipaddress> <netmask> <gateway> <nameserver> 
 
-	You must specify each of the arguments. 
+	buildks [options] <fqdn> <ipaddress> <netmask> <gateway> <nameserver> 
+
+	You must specify each of these arguments. 
+
+	`buildks -h` will invoke a simple help menu.
 
 Example:
+
 	(Note: buildks is in root's path on rhn)
 
 	buildks -b bakerlu_bootstrap.sh bakerlu-sb.missouri.edu 128.206.0.157 255.255.255.192 128.206.0.190 128.206.10.2
 
-	The kickstart file will be named <fqdn>.ks; it is written to /var/www/html/pub/ks/
+	The kickstart file will be named <fqdn>.ks; it is written to /var/www/html/pub/ks/. By default, it will select
+	'x86_64' as the arch and RHEL 5 as the release. You can specify different values. The example below defines
+	RHEL6 release and i386 architecture.
+
+	buildks -a 6 -r i386 -b bakerlu_bootstrap.sh bakerlu-sb.missouri.edu 128.206.0.157 255.255.255.192 128.206.0.190 128.206.10.2
