@@ -3,6 +3,7 @@ from optparse import OptionParser, OptionValueError
 from urlparse import urljoin
 from subprocess import PIPE, Popen
 from sys import argv
+import ConfigParser
 import os
 
 class KickstartBuild(object):
@@ -11,22 +12,25 @@ class KickstartBuild(object):
 
 	"""
 	
-	def __init__(self, template_file):
+	def __init__(self):
 		"""
 		Builds the parser menu, sets attibutes
 
 		"""
 
-		# Attributes
-		self.template_file = template_file	
-		self.base_url = 'http://rhn.missouri.edu/pub'
-		self.repo_name = 'csgrepo'
-		self.repo_url = '/'.join([self.base_url,self.repo_name])
+		config = ConfigParser.RawConfigParser()
+		config.read('/etc/ks-build/ks-build.conf')
 
-		# Array of strings because we have to join these later (I'm lazy)
+		# Config options
+		self.template_file = config.get('global', 'template')
+		self.base_url = config.get('global', 'base_url')
+		self.repo_name = config.get('global', 'repo')
+		self.output_dir = config.get('global', 'output_dir')
+		self.bootstrap_path = config.get('global', 'bootstrap_path')
+
+		self.repo_url = '/'.join([self.base_url,self.repo_name])
 		self.valid_releases = ['4', '5', '6']
 		self.valid_archs = ['x86_64', 'i386']
-		self.bootstrap_path = os.path.dirname('/var/www/html/pub/bootstrap/')
 
 		# args_required should be set to minimum required arguments
 		self.args_required = 4
@@ -39,10 +43,10 @@ class KickstartBuild(object):
 		)
 
 		self.parser.set_defaults(
-			arch = 'x86_64',
-			release = '5',
-			bootstrap = 'bootstrap.sh',
-			dns = '128.206.10.2',
+			arch = config.get('parser', 'default_arch'),
+			release = config.get('parser', 'default_release'),
+			bootstrap = config.get('parser', 'default_bootstrap'),
+			dns = config.get('parser', 'default_dns'),
 		)
 
 		self.parser.add_option('-a', '--arch', action='store', type='string',
@@ -129,7 +133,7 @@ class KickstartBuild(object):
 
 		return results
 
-	def build(self, output_dir):
+	def build(self):
 		"""
 		Constructs template based on the file self.template_file
 
@@ -164,7 +168,7 @@ class KickstartBuild(object):
 			repo_url = '/'.join([self.repo_url, url_segments.get('repo_segment')]),	
 		)
 
-		dir = os.path.dirname(output_dir)
+		dir = os.path.dirname(self.output_dir)
 
 		# The kickstart filename is <hostname>.ks
 		filename = '.'.join([self.args[0], 'ks'])
