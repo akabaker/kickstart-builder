@@ -8,6 +8,8 @@ Usage:
 
 	`buildks -h` will invoke a simple help menu.
 
+	You can edit configuration options in /etc/ks-build/ks-build.conf
+
 Example:
 
 	(Note: buildks is in root's path on rhn)
