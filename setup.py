@@ -4,7 +4,7 @@ setup(
     name='ks-build',
     version='1.0',
     py_modules=['kickstartbuild'],
-    scripts=['/home/ljb6tw/kickstart-builder/ks-build'],
+    scripts=['/home/ljb6tw/kickstart-builder/bin/ks-build'],
     data_files=[
     	('/etc/ks-build', ['/home/ljb6tw/kickstart-builder/conf/ks-build.conf']),	
     	('/etc/ks-build/templates', [
