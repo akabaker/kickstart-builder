@@ -1,15 +1,17 @@
 from distutils.core import setup
 
+base_dir = '/home/ljb6tw/kickstart-builder'
+
 setup(
-    name='ks-build',
+    name='buildks',
     version='1.0',
     py_modules=['kickstartbuild'],
-    scripts=['/home/ljb6tw/kickstart-builder/bin/ks-build'],
+    scripts=['%s/script/buildks' % base_dir],
     data_files=[
-    	('/etc/ks-build', ['/home/ljb6tw/kickstart-builder/conf/ks-build.conf']),	
-    	('/etc/ks-build/templates', [
-			'/home/ljb6tw/kickstart-builder/conf/templates/csgbase.tmpl',
-			'/home/ljb6tw/kickstart-builder/conf/templates/oldbase.tmpl',
+    	('/etc/buildks', ['%s/conf/buildks.conf' % base_dir]),	
+    	('/etc/buildks/templates', [
+			'%s/conf/templates/csgbase.tmpl' % base_dir,
+			'%s/conf/templates/oldbase.tmpl' % base_dir,
     		]),
     	]
     )

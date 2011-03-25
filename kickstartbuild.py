@@ -19,7 +19,7 @@ class KickstartBuild(object):
 		"""
 
 		config = ConfigParser.RawConfigParser()
-		config.read('/etc/ks-build/ks-build.conf')
+		config.read('/etc/buildks/buildks.conf')
 
 		# Config options
 		self.template_file = config.get('global', 'template')
