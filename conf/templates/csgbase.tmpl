@@ -94,10 +94,10 @@ zerombr
 clearpart --all --drives=sda
 
 # Disk partitioning information
-part /boot --asprimary --fstype="ext4" --size=100
-part swap --asprimary --fstype="swap" --size=2048
-part /tmp --asprimary --fstype="ext4" --size=1024
-part / --asprimary --fstype="ext4" --grow --size=1
+part /boot --label boot --asprimary --fstype="ext4" --size=100
+part swap --label swap --asprimary --fstype="swap" --size=2048
+part /tmp --label tmp --asprimary --fstype="ext4" --size=1024
+part / --label / --asprimary --fstype="ext4" --grow --size=1
 
 ## Create primary partitions
 #part /boot --fstype "ext3" --size=512 --asprimary
@@ -635,3 +635,52 @@ chkconfig rawdevices off
 /bin/rm -rf /var/lib/puppet
 /bin/rpm -e puppet
 /usr/bin/yum -y install puppet
+
+# IPtables
+
+cat <<EOF > /etc/sysconfig/iptables
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [43:3960]
+
+# ---------  Locahost and Self --------------
+-A INPUT -s 127.0.0.0/255.0.0.0 -j ACCEPT
+-A INPUT -s ${ip} -j ACCEPT
+
+# ---------  established --------------------
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# ---------  Big Brother --------------------
+-A INPUT -s 128.206.12.149 -p icmp -m icmp --icmp-type 8 -j ACCEPT
+-A INPUT -s 128.206.12.149 -j ACCEPT
+
+# ------- zabbix ----------------------------
+-A INPUT -s 128.206.15.46 -p tcp --dport 10050 -j ACCEPT
+-A INPUT -s 131.151.122.12 -p tcp --dport 10050 -j ACCEPT
+-A INPUT -s 207.160.154.204 -p tcp --dport 10050 -j ACCEPT
+
+# -------- datacide -------------------------
+-A INPUT -s 128.206.12.16/32 -j ACCEPT
+
+# -------- second floor telecom -------------
+-A INPUT -s 128.206.43.0/25 -j ACCEPT
+
+# -------- csgadmin vpn ---------------------
+-A INPUT -s 128.206.226.208/28 -j ACCEPT
+-A INPUT -s 161.130.250.0/28 -j ACCEPT
+
+# -------- Dell Openmanage SNMP network -----
+-A INPUT -s 207.160.155.217 -j ACCEPT
+-A INPUT -s 207.160.157.5 -j ACCEPT
+
+#------- VMWare Perfmon ---------------------
+-A INPUT -s 128.206.15.60 -p tcp --dport 22 -j ACCEPT
+-A INPUT -s 128.206.15.60 -p icmp -m icmp --icmp-type 8 -j ACCEPT
+-A INPUT -s 128.206.15.62 -p tcp --dport 22 -j ACCEPT
+-A INPUT -s 128.206.15.62 -p icmp -m icmp --icmp-type 8 -j ACCEPT
+
+#-A INPUT -p tcp -j LOG --log-level warning
+
+COMMIT
+EOF
