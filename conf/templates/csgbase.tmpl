@@ -26,7 +26,6 @@ reboot --eject
 # Kickstart assumes dhcp over eth0 if not specified otherwise
 # These can be serialized on a per-machine basis, or 
 # provided on the command line during system installation as described 
-#network --bootproto=static --ip=<ip address> --netmask=<netmask> --gateway=<ip address> --nameserver=<ip address>
 network --bootproto=static --device=eth0 --onboot=on --hostname=${hostname} --ip=${ip} --netmask=${netmask} --gateway=${gateway} --nameserver=${dns} --noipv6
 
 # Install from a cdrom
@@ -124,6 +123,7 @@ ruby
 ruby-libs
 puppet
 facter
+zabbix-agent
 
 
 # Individual packages to be removed from the groups
@@ -223,7 +223,7 @@ echo -e "install squashfs /bin/true" >> /etc/modprobe.d/usgcb-blacklist
 echo -e "install udf /bin/true" >> /etc/modprobe.d/usgcb-blacklist
 
 # CCE-4220-0  (Row 52)
-echo -e "umask 027" >> /etc/sysconfig/init
+#echo -e "umask 027" >> /etc/sysconfig/init
 
 # CCE-4225-9 (Row 53)
 echo -n "* hard core 0" >> /etc/security/limits.conf
@@ -274,16 +274,16 @@ sed -i "/pam_unix.so/s/shadow/shadow remember=24/" /etc/pam.d/system-auth
 # Notes CCE-3301-9, CCE-14957-5, CCE-4090-7 (rows 82 - 84 are noops)
 
 # CCE-14107-7 (row 85)
-sed -i "/UMASK/s/[0-9]\{3\}/077/" /etc/login.defs
+#sed -i "/UMASK/s/[0-9]\{3\}/077/" /etc/login.defs
 
 # CCE-14847-8 (row 86)
-echo "umask 077" >> /etc/profile
+#echo "umask 077" >> /etc/profile
 
 # CCE-3844-8  (row 87)
-sed -i "/umask/s/022/077/" /etc/bashrc
+#sed -i "/umask/s/022/077/" /etc/bashrc
 
 # CCE-4227-5  (row 88)
-sed -i "/umask/s/022/077/" /etc/csh.cshrc
+#sed -i "/umask/s/022/077/" /etc/csh.cshrc
 
 # Notes CCE-3923-0  (rows 89 is a noop)
 
@@ -624,13 +624,13 @@ chkconfig rawdevices off
 /usr/bin/wget -qO - http://rhn.missouri.edu/pub/bootstrap/${bootstrap} | /bin/bash
 #make initial puppet request, check for cert signature every 60 sec
 /bin/echo "Starting puppet run"
-/usr/sbin/puppetd -t --fqdn=bootstrap.missouri.edu --waitforcert=10 --server puppet-vm1.missouri.edu
+/usr/sbin/puppetd -t --fqdn=bootstrap.missouri.edu --pluginsync --waitforcert=10 --server puppet-vm1.missouri.edu
 #sleep
 /bin/sleep 5
 #another puppet run, for good measure
-/usr/sbin/puppetd -t --fqdn=bootstrap.missouri.edu --server puppet-vm1.missouri.edu
+/usr/sbin/puppetd -t --fqdn=bootstrap.missouri.edu --pluginsync --server puppet-vm1.missouri.edu
 #updates
-/usr/bin/yum -y update
+#/usr/bin/yum -y update
 #remove the old cert 
 /bin/rm -rf /var/lib/puppet
 /bin/rpm -e puppet
@@ -660,19 +660,12 @@ cat <<EOF > /etc/sysconfig/iptables
 -A INPUT -s 131.151.122.12 -p tcp --dport 10050 -j ACCEPT
 -A INPUT -s 207.160.154.204 -p tcp --dport 10050 -j ACCEPT
 
-# -------- datacide -------------------------
--A INPUT -s 128.206.12.16/32 -j ACCEPT
-
 # -------- second floor telecom -------------
 -A INPUT -s 128.206.43.0/25 -j ACCEPT
 
 # -------- csgadmin vpn ---------------------
 -A INPUT -s 128.206.226.208/28 -j ACCEPT
 -A INPUT -s 161.130.250.0/28 -j ACCEPT
-
-# -------- Dell Openmanage SNMP network -----
--A INPUT -s 207.160.155.217 -j ACCEPT
--A INPUT -s 207.160.157.5 -j ACCEPT
 
 #------- VMWare Perfmon ---------------------
 -A INPUT -s 128.206.15.60 -p tcp --dport 22 -j ACCEPT

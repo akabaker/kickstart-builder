@@ -2,7 +2,7 @@ from string import Template
 from optparse import OptionParser, OptionValueError
 from urlparse import urljoin
 from subprocess import PIPE, Popen
-from sys import argv
+from sys import argv, stdout
 import ConfigParser
 import os
 
@@ -39,7 +39,7 @@ class KickstartBuild(object):
 		self.parser = OptionParser(
 			add_help_option=True,
 			usage = "%prog [options] <fqdn> <ipaddress> <netmask> <gateway>",
-			version = "%prog 1.0",
+			version = "%prog 1.1",
 		)
 
 		self.parser.set_defaults(
@@ -47,6 +47,7 @@ class KickstartBuild(object):
 			release = config.get('parser', 'default_release'),
 			bootstrap = config.get('parser', 'default_bootstrap'),
 			dns = config.get('parser', 'default_dns'),
+			skip_validate = config.get('parser', 'default_validation')
 		)
 
 		self.parser.add_option('-a', '--arch', action='store', type='string',
@@ -60,6 +61,9 @@ class KickstartBuild(object):
 
 		self.parser.add_option('-r', '--release', action='store',type='string', dest='release',
 						 help='Distribution Release, (i.e., 5 or 6)')
+
+		self.parser.add_option('-s', '--skip-validate', action='store_true', dest='skip_validate',
+						 help='Skip validation checks: (IP / hostname resolution)')
 
 		# Set options and args
 		(self.options, self.args) = self.parser.parse_args()
@@ -139,6 +143,11 @@ class KickstartBuild(object):
 
 		"""
 
+		if self.options.skip_validate is True:
+			pass
+		else:
+			self.validate()
+
 		try:
 			f = open(self.template_file, 'r')
 			try:
@@ -181,6 +190,7 @@ class KickstartBuild(object):
 					f.write(output)
 				finally:
 					f.close()
+					print('File %s has been created') % file
 			except IOError, e:
 				print "Problem reading file: %s" % e
 		else:

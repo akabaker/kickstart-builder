@@ -22,7 +22,14 @@ Example:
 		-Release=5
 		-Bootstrap=bootstrap.sh (default DoIT group on RHN)
 		-Dns=128.206.10.2
+		--skip-validate
 
 	These defaults can be overriden by supplying the approprate options. Consider the following:
 
-	buildks -a 6 -r i386 -b bakerlu_bootstrap.sh bakerlu-sb.missouri.edu 128.206.0.157 255.255.255.192 128.206.0.190
+	buildks --skip-validate -r 6 -a i386 -b bakerlu_bootstrap.sh bakerlu-sb.missouri.edu 128.206.0.157 255.255.255.192 128.206.0.190
+
+	In this example, a kickstart was created with the following parameters:
+		-No validation checks performed. A use case would be deploying a machine in the testlab.
+		-Release is RHEL6
+		-Architecture is i386
+		-Bootstrap file to be used is bakerlu_bootstrap.sh

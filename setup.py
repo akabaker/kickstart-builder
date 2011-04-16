@@ -4,7 +4,7 @@ base_dir = '/home/ljb6tw/kickstart-builder'
 
 setup(
     name = 'buildks',
-    version = '1.0',
+    version = '1.1',
     py_modules = ['kickstartbuild'],
     scripts = ['%s/script/buildks' % base_dir],
     data_files = [

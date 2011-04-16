@@ -5,7 +5,6 @@ from kickstartbuild import KickstartBuild
 def main():
 	ks = KickstartBuild()
 	ks.check_args()
-	ks.validate()
 	ks.build()
 
 if __name__ == '__main__':
